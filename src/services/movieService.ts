@@ -1,13 +1,17 @@
 import axios from "axios";
 import type { Movie } from "../types/movie";
 
-interface FetchMoviesResponse {
+export interface FetchMoviesResponse {
   results: Movie[];
+  total_pages: number;
 }
 
 const token = import.meta.env.VITE_TMDB_TOKEN;
 
-export async function fetchMovies(query: string): Promise<Movie[]> {
+export async function fetchMovies(
+  query: string,
+  page: number
+): Promise<FetchMoviesResponse> {
   if (!token) {
     throw new Error("TMDB token is missing");
   }
@@ -17,6 +21,7 @@ export async function fetchMovies(query: string): Promise<Movie[]> {
     {
       params: {
         query,
+        page,
       },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -24,5 +29,5 @@ export async function fetchMovies(query: string): Promise<Movie[]> {
     }
   );
 
-  return response.data.results;
+  return response.data;
 }
